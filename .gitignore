@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Project Specific files
+credentials.json
+token.json
+test.py
+secrets.ini
+
 # C extensions
 *.so
 
