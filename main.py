@@ -1,11 +1,13 @@
 from datetime import datetime
 import os.path
 import configparser
+from string import Template
 import discord
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+import constants as C
 
 # Scope of Google Calendar API
 # If modifying these scopes, delete the file token.json.
@@ -28,9 +30,10 @@ async def on_message(message):
 
     if message.content.startswith('$events'):
         events = get_events()
-        if events is None:
+        event_counter = 1
+        # If list is empty
+        if not events:
             await message.channel.send("No upcoming events found.")
-            return
         for event in events:
             start = event['start']['dateTime']
             start = start[:-6]
@@ -41,21 +44,17 @@ async def on_message(message):
             end = datetime.strptime(
                 end, '%Y-%m-%dT%H:%M:%S').strftime('%I:%M %p %d/%m/%Y')
             summary = event['summary']
-            e_message = f"**Start Time:** {start}\n"
-            e_message = e_message + f"**End Time:** {end}\n"
-            e_message = e_message + f"**Summary:** {summary}\n"
             try:
                 description = event['description']
-                print(start, summary, description, end)
-                e_message = e_message + f"**Description:** {description}\n"
-            except:
-                print("No Description")
+            except KeyError:
+                description = "None"
             try:
                 meet_link = event['hangoutLink']
-                e_message = e_message + f"**Meet Link:** {meet_link}\n"
-            except:
-                print("No meet link.")
-            e_message = e_message + "\n\n"
+            except KeyError:
+                meet_link = "None"
+            e_message = Template(C.EVENTS_TEMPLATE).substitute(
+                eno=event_counter, start=start, end=end, summary=summary, description=description, meet_link=meet_link)
+            event_counter = event_counter + 1
             await message.channel.send(e_message)
 
 
@@ -89,8 +88,7 @@ def get_events():
 
     # Call the Calendar API
     events_result = service.events().list(calendarId='primary', timeMin=now,
-                                          maxResults=10, singleEvents=True,
-                                          orderBy='startTime').execute()
+                                          maxResults=10, singleEvents=True, orderBy='startTime').execute()
     events = events_result.get('items', [])
 
     return events
