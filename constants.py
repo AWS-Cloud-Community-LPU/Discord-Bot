@@ -1,3 +1,5 @@
+LOG_FILE = "logs.txt"
+
 EVENTS_TEMPLATE = """
 ==============================
 **Event No.:** $eno

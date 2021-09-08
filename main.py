@@ -9,6 +9,28 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 import constants as C
 
+
+def get_time():
+    """Gets Current Time
+    Returns:
+        HH:MM:SS {AM/PM} DD/MM/YYYY
+    """
+    return datetime.now().strftime('%I:%M:%S %p %d/%m/%Y')
+
+
+def print_logs(log_message):
+    """Writes logs in logs.txt
+    """
+    line = "-------------\n"
+    log_message = line + log_message + line
+    print(log_message, file=open(C.LOG_FILE, 'a+'))
+
+
+log_message = f"Bot Started at {get_time()}\n"
+print(log_message)
+print_logs(log_message)
+
+
 # Scope of Google Calendar API
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']

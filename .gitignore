@@ -8,6 +8,7 @@ credentials.json
 token.json
 test.py
 secrets.ini
+logs.txt
 
 # C extensions
 *.so
