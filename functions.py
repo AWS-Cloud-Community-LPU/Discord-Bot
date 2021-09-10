@@ -21,8 +21,8 @@ def print_logs(log_message):
     """
     line = "-------------\n"
     log_message = line + log_message + line
-    with open(C.LOG_FILE, 'a+') as lp:
-        print(log_message, file=lp)
+    with open(C.LOG_FILE, 'a+', encoding='utf8') as log_file:
+        print(log_message, file=log_file)
 
 
 # Scope of Google Calendar API
@@ -51,7 +51,7 @@ def fetch_events():
                 'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.json', 'w') as token:
+        with open('token.json', 'w', encoding='utf8') as token:
             token.write(creds.to_json())
 
     service = build('calendar', 'v3', credentials=creds)
