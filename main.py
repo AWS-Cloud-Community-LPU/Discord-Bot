@@ -23,6 +23,10 @@ async def on_message(message):
         return
 
     if message.content.startswith('$events'):
+        log_text = f"User: {message.author}\n"
+        log_text = log_text + f"Time: {F.get_time()}\n"
+        log_text = log_text + "Command: $events\n"
+        F.print_logs(log_text)
         await message.channel.send(F.get_events())
 
 
