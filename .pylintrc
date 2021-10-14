@@ -1,0 +1,3 @@
+[MAIN]
+disable=
+    E1101, # Instance of 'Resource' has no 'events' member (no-member)
