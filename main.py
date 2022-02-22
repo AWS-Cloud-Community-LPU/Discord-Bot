@@ -1,6 +1,6 @@
 """
 MIT License
-Copyright (c) 2021 AWS Cloud Community LPU
+Copyright (c) 2022 AWS Cloud Community LPU
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@ F.print_logs(log_message)
 # Discord authentication
 client = discord.Client()
 config = configparser.ConfigParser()
-config.read('secrets.ini')
+config.read("secrets.ini")
 
 
 @client.event
@@ -35,7 +35,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('$events'):
+    if message.content.startswith("$events"):
         log_text = f"User: {message.author}\n"
         log_text = log_text + f"Time: {F.get_time()}\n"
         log_text = log_text + "Command: $events\n"
@@ -43,4 +43,4 @@ async def on_message(message):
         await message.channel.send(F.get_events())
 
 
-client.run(config['KEYS']['API_KEY'])
+client.run(config["KEYS"]["API_KEY"])

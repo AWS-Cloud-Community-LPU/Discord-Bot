@@ -9,6 +9,7 @@ token.json
 test.py
 secrets.ini
 logs.txt
+.vscode
 
 # C extensions
 *.so

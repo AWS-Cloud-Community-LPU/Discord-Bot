@@ -1,6 +1,6 @@
 """
 MIT License
-Copyright (c) 2021 AWS Cloud Community LPU
+Copyright (c) 2022 AWS Cloud Community LPU
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,21 +26,20 @@ def get_time():
     Returns:
         HH:MM:SS {AM/PM} DD/MM/YYYY
     """
-    return datetime.now().strftime('%I:%M:%S %p %d/%m/%Y')
+    return datetime.now().strftime("%I:%M:%S %p %d/%m/%Y")
 
 
 def print_logs(log_message):
-    """Writes logs in logs.txt
-    """
+    """Writes logs in logs.txt"""
     line = "-------------\n"
     log_message = line + log_message + line
-    with open(C.LOG_FILE, 'a+', encoding='utf8') as log_file:
+    with open(C.LOG_FILE, "a+", encoding="utf8") as log_file:
         print(log_message, file=log_file)
 
 
 # Scope of Google Calendar API
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 
 def fetch_events():
@@ -53,29 +52,36 @@ def fetch_events():
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    if os.path.exists("token.json"):
+        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.json', 'w', encoding='utf8') as token:
+        with open("token.json", "w", encoding="utf8") as token:
             token.write(creds.to_json())
 
-    service = build('calendar', 'v3', credentials=creds)
+    service = build("calendar", "v3", credentials=creds)
 
     now = datetime.now().astimezone().isoformat()
 
     # Call the Calendar API
-    events_result = service.events().list(calendarId='primary', timeMin=now,
-                                          maxResults=10, singleEvents=True,
-                                          orderBy='startTime').execute()
-    events = events_result.get('items', [])
+    events_result = (
+        service.events()
+        .list(
+            calendarId="primary",
+            timeMin=now,
+            maxResults=10,
+            singleEvents=True,
+            orderBy="startTime",
+        )
+        .execute()
+    )
+    events = events_result.get("items", [])
 
     return events
 
@@ -93,26 +99,31 @@ def get_events():
         return "No upcoming events found."
     e_message = ""
     for event in events:
-        start = event['start']['dateTime']
+        start = event["start"]["dateTime"]
         start = start[:-6]
-        end = event['end']['dateTime']
+        end = event["end"]["dateTime"]
         end = end[:-6]
-        start = datetime.strptime(
-            start, '%Y-%m-%dT%H:%M:%S').strftime('%I:%M %p %d/%m/%Y')
-        end = datetime.strptime(
-            end, '%Y-%m-%dT%H:%M:%S').strftime('%I:%M %p %d/%m/%Y')
-        summary = event['summary']
+        start = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S").strftime(
+            "%I:%M %p %d/%m/%Y"
+        )
+        end = datetime.strptime(end, "%Y-%m-%dT%H:%M:%S").strftime("%I:%M %p %d/%m/%Y")
+        summary = event["summary"]
         try:
-            description = event['description']
+            description = event["description"]
         except KeyError:
             description = "None"
         try:
-            meet_link = event['hangoutLink']
+            meet_link = event["hangoutLink"]
         except KeyError:
             meet_link = "None"
         e_message = e_message + Template(C.EVENTS_TEMPLATE).substitute(
-            eno=event_counter, start=start, end=end, summary=summary,
-            description=description, meet_link=meet_link)
+            eno=event_counter,
+            start=start,
+            end=end,
+            summary=summary,
+            description=description,
+            meet_link=meet_link,
+        )
         event_counter = event_counter + 1
         e_message = e_message + "\n"
     return e_message
