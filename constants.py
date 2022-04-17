@@ -11,7 +11,7 @@ SOFTWARE.
 """
 
 
-LOG_FILE = "logs.txt"
+LOG_FILE = "Main.log"
 
 EVENTS_TEMPLATE = """
 ==============================
