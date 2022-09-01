@@ -22,7 +22,9 @@ F.print_logs(log_message)
 
 
 # Discord authentication
-client = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = False
+client = discord.Client(intents=intents)
 config = configparser.ConfigParser()
 config.read("secrets.ini")
 
